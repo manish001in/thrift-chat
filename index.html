@@ -177,7 +177,7 @@ textarea { display: block; width: 100%; min-height: 8rem; resize: vertical; line
 <script>
 /* ---------- config ---------- */
 // Google Apps Script web-app URL (see apps-script.gs). Empty = answers stay on this device only.
-const ENDPOINT = "";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbyrSV_WjFWgcsu7OVZrhVtbmE--0Dae0C3W0IFm1ss9RXSCgVKsTboKkdv5ouVXnwNj8w/exec";
 const params = new URLSearchParams(location.search);
 const EVENT = (params.get("e") || "").slice(0, 60);
 const KIOSK = params.has("kiosk");
