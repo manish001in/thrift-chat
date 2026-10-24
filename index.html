@@ -3,209 +3,173 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Kook · Quick Chat</title>
+<title>Quick chat ✶ thrift</title>
 <meta name="description" content="You talked to us today. A few quick questions about shopping and selling thrift.">
-<meta name="theme-color" content="#F4F0E8">
+<meta name="theme-color" content="#FF5FA2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8D%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@500;600;800&family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 <style>
-/* Kook colours (Golden Book §5.2, design-foundation-v2/colour.ts) */
 :root {
-  --ground: #F4F0E8;
-  --raised: #FFFDF8;
-  --ink: #171717;
-  --muted: #5E584F;
-  --line: #D6CEC1;
-  --cobalt: #2446C5;
-  --cobalt-deep: #17379F;
-  --cobalt-tint: #EEF2FF;
-  --live: #C63C1E;
-  --disabled-fill: #E4DED3;
-  --disabled-ink: #6F6A62;
-  --display: "Bebas Neue", "Barlow Condensed", Impact, sans-serif;
-  --functional: "Barlow Condensed", "Arial Narrow", sans-serif;
-  --everyday: "Barlow Semi Condensed", "Barlow", system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --ink: #111111;
+  --paper: #FFFFFF;
+  --soft: #4A4A4A;
+  --bg: #FF5FA2;
+  --pink: #FF5FA2;
+  --lime: #C8F25A;
+  --orange: #FF8A3D;
+  --lilac: #C4B5FF;
+  --yellow: #FFD84D;
+  --aqua: #6FE3D2;
+  --accent: #C8F25A;
+  --danger: #B00020;
+  --head: "Bricolage Grotesque", system-ui, sans-serif;
+  --body: "DM Sans", system-ui, sans-serif;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0;
-  min-height: 100dvh;
-  background-color: var(--ground);
-  /* one subtle paper grain */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  color: var(--ink);
-  font-family: var(--everyday);
-  font-size: 1rem;
-  line-height: 1.4;
+  margin: 0; min-height: 100dvh;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(17,17,17,.16) 1.2px, transparent 1.6px);
+  background-size: 22px 22px;
+  color: var(--ink); font-family: var(--body); font-size: 1rem; line-height: 1.4;
+  transition: background-color .45s ease;
+  overflow-x: hidden;
 }
 button, input, textarea { font: inherit; color: inherit; }
-.wrap {
-  width: 100%;
-  max-width: 30rem;
-  margin: 0 auto;
-  min-height: 100dvh;
-  padding: max(env(safe-area-inset-top), 0.75rem) 1rem max(env(safe-area-inset-bottom), 1.25rem);
-  display: flex;
-  flex-direction: column;
-}
+.wrap { width: 100%; max-width: 30rem; margin: 0 auto; min-height: 100dvh; padding: 0 min(1rem, 5vw) max(env(safe-area-inset-bottom), 1.25rem); display: flex; flex-direction: column; }
 
-/* top bar */
-.bar { display: grid; grid-template-columns: 2.75rem 1fr 2.75rem; align-items: center; min-height: 3rem; }
-.brand { font-family: var(--display); font-size: 1.85rem; letter-spacing: .04em; text-align: center; line-height: 1; margin: 0; }
-.back {
-  width: 2.75rem; height: 2.75rem; border: 0; background: none; border-radius: 50%;
-  display: grid; place-items: center; cursor: pointer;
-}
-.back svg { width: 1.4rem; height: 1.4rem; }
-.back[hidden] { visibility: hidden; display: grid; }
-.progress { display: flex; gap: .25rem; margin: .5rem 0 0; min-height: .3rem; }
-.progress span { flex: 1; height: .3rem; border-radius: 2px; background: var(--line); }
-.progress span.on { background: var(--cobalt); }
+/* marquee */
+.marquee { margin: 0 calc(-1 * min(1rem, 5vw)); padding-top: env(safe-area-inset-top); background: var(--ink); color: var(--paper); overflow: hidden; border-bottom: 2.5px solid var(--ink); }
+.marquee-track { display: flex; width: max-content; animation: slide 28s linear infinite; }
+.marquee span { font-family: var(--head); font-weight: 700; font-size: .95rem; letter-spacing: .02em; padding: .55rem 0; white-space: nowrap; }
+.marquee b { color: var(--accent); font-weight: 800; padding: 0 .7rem; transition: color .45s; }
+@keyframes slide { to { transform: translateX(-50%); } }
 
-main { flex: 1; display: flex; flex-direction: column; padding-top: 1.1rem; }
+.bar { display: flex; align-items: center; gap: .6rem; min-height: 3.6rem; }
+.back { flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--paper); box-shadow: 2px 2px 0 var(--ink); display: grid; place-items: center; cursor: pointer; }
+.back svg { width: 1.2rem; height: 1.2rem; }
+.back[hidden] { display: none; }
+.progress { flex: 1; height: .85rem; border: 2.5px solid var(--ink); border-radius: 99px; background: var(--paper); overflow: hidden; }
+.progress[hidden] { display: none; }
+.progress i { display: block; height: 100%; background: var(--ink); border-radius: 99px; transition: width .35s ease; }
+.count-chip { flex: none; font-family: var(--head); font-weight: 800; font-size: .95rem; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 99px; padding: .2rem .65rem; box-shadow: 2px 2px 0 var(--ink); }
+.count-chip[hidden] { display: none; }
+
+main { flex: 1; display: flex; flex-direction: column; padding-top: .5rem; }
 main:focus, [tabindex="-1"]:focus { outline: none; }
-.step { flex: 1; display: flex; flex-direction: column; animation: in .28s ease-out; }
-@keyframes in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .step { animation: none; } }
+.step { flex: 1; display: flex; flex-direction: column; animation: pop .35s cubic-bezier(.2,.9,.3,1.3); }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
 
-.eyebrow { font-family: var(--functional); font-weight: 600; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cobalt); margin: 0 0 .5rem; }
-.hero { font-family: var(--display); font-weight: 400; font-size: min(clamp(2.6rem, 11vw, 3.4rem), 16vw); line-height: .95; letter-spacing: .01em; margin: 0 0 .75rem; }
-.hero em { font-style: normal; color: var(--cobalt); }
-.lede { font-size: 1.1rem; line-height: 1.4; margin: 0 0 1.25rem; max-width: 26rem; }
-.q { font-family: var(--everyday); font-weight: 500; font-size: clamp(1.4rem, 6vw, 1.65rem); line-height: 1.2; margin: 0 0 .35rem; }
-.hint { color: var(--muted); font-size: .95rem; margin: 0 0 1rem; }
+.card { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 22px; box-shadow: 5px 5px 0 var(--ink); padding: 1.25rem 1.1rem 1.2rem; position: relative; }
 
-/* ticket on the welcome step */
-.ticket {
-  position: relative; margin: .25rem 0 1.4rem; padding: 1rem 1.1rem 1rem 1.25rem;
-  background: var(--raised);
-  border-radius: 6px;
-  box-shadow: 0 1px 0 rgba(23,23,23,.06), 0 8px 22px -14px rgba(23,23,23,.35);
-  transform: rotate(-1.2deg);
-  -webkit-mask: radial-gradient(circle .65rem at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
-                radial-gradient(circle .65rem at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
-          mask: radial-gradient(circle .65rem at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
-                radial-gradient(circle .65rem at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
-}
-.ticket::before { content: ""; position: absolute; inset: .45rem; border: 1.5px solid var(--cobalt); border-radius: 3px; pointer-events: none; }
-.ticket { container-type: inline-size; }
-.ticket-inner { display: flex; align-items: center; gap: .9rem; }
-@container (max-width: 19rem) {
-  .ticket-inner { flex-direction: column; align-items: flex-start; }
-  .ticket-perf { display: none; }
-  .stamp { align-self: flex-end; margin-top: -.5rem; }
-}
-.ticket-main { flex: 1; min-width: 0; }
-.ticket-kicker { font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin: 0 0 .2rem; }
-.ticket-title { font-family: var(--display); font-size: min(clamp(1.7rem, 7.5vw, 2.1rem), 11vw); line-height: .95; color: var(--cobalt); margin: 0; letter-spacing: .02em; }
-.ticket-perf { align-self: stretch; border-left: 2px dashed var(--line); }
-.stamp {
-  flex: none; width: 4.6rem; height: 4.6rem; border-radius: 50%;
-  border: 2px solid var(--live); color: var(--live);
-  display: grid; place-items: center; text-align: center;
-  font-family: var(--functional); font-weight: 800; font-size: .7rem; line-height: 1.05; letter-spacing: .06em; text-transform: uppercase;
-  transform: rotate(12deg);
-  box-shadow: inset 0 0 0 3px var(--raised), inset 0 0 0 4px var(--live);
-  padding: .4rem;
-  word-break: break-word;
-}
+.kicker { display: inline-flex; align-items: center; gap: .4rem; font-family: var(--head); font-weight: 700; font-size: .9rem; background: var(--ink); color: var(--paper); border-radius: 99px; padding: .3rem .8rem; margin: 0 0 .8rem; transform: rotate(-2deg); width: fit-content; }
+.hero { font-family: var(--head); font-weight: 800; font-size: min(clamp(2.6rem, 12vw, 3.5rem), 15vw); line-height: .95; letter-spacing: -.03em; margin: 0 0 .9rem; overflow-wrap: break-word; }
+.hl { position: relative; display: inline-block; z-index: 0; }
+.hl::after { content: ""; position: absolute; z-index: -1; left: -.08em; right: -.08em; bottom: .05em; height: .42em; background: var(--accent); border-radius: .2em; transform: rotate(-1.5deg); transition: background-color .45s; }
+.lede { font-size: 1.12rem; line-height: 1.45; margin: 0 0 1.1rem; }
+.q { font-family: var(--head); font-weight: 800; font-size: min(clamp(1.55rem, 6.6vw, 1.9rem), 10vw); line-height: 1.08; letter-spacing: -.02em; margin: 0 0 .4rem; }
+.hint { color: var(--soft); font-size: 1rem; margin: 0 0 1rem; }
+
+/* hello sticker */
+.sticker-row { display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; margin: .4rem 0 1.1rem; }
+.hello { min-width: 0; overflow-wrap: anywhere; font-family: var(--head); font-weight: 800; font-size: min(1.5rem, 7vw); line-height: 1; background: var(--yellow); border: 2.5px solid var(--ink); border-radius: 16px; padding: .7rem .9rem; box-shadow: 4px 4px 0 var(--ink); transform: rotate(-3deg); max-width: 75%; }
+.hello small { display: block; font-family: var(--body); font-weight: 500; font-size: .85rem; margin-bottom: .25rem; }
+.blob { flex: none; width: min(4.6rem, 20vw); height: min(4.6rem, 20vw); border-radius: 50%; background: var(--paper); border: 2.5px solid var(--ink); display: grid; place-items: center; font-size: min(2.2rem, 10vw); box-shadow: 3px 3px 0 var(--ink); transform: rotate(8deg); animation: wobble 3.2s ease-in-out infinite; }
+@keyframes wobble { 50% { transform: rotate(-6deg) scale(1.04); } }
 
 /* options */
 fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 legend { padding: 0; }
-.opts { display: grid; gap: .55rem; margin: .25rem 0 1rem; }
+.opts { display: grid; gap: .6rem; margin: .2rem 0 1rem; }
 .opt { position: relative; display: block; }
 .opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .opt-face {
-  display: flex; align-items: center; gap: .75rem;
-  min-height: 3.25rem; padding: .7rem .9rem;
-  background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px;
-  font-size: 1.08rem; line-height: 1.25; cursor: pointer;
-  transition: border-color .12s, background-color .12s, transform .08s;
+  display: flex; align-items: center; gap: .75rem; min-height: 3.4rem; padding: .7rem 1rem;
+  background: var(--paper); border: 2.5px solid var(--ink); border-radius: 16px; box-shadow: 3px 3px 0 var(--ink);
+  font-weight: 500; font-size: 1.08rem; line-height: 1.25; cursor: pointer;
+  transition: transform .1s, box-shadow .1s, background-color .15s;
 }
-.opt-face:active { transform: scale(.985); }
-.opt-mark {
-  flex: none; width: 1.35rem; height: 1.35rem; border: 1.5px solid var(--muted); display: grid; place-items: center;
-  background: var(--raised);
-}
-.single .opt-mark { border-radius: 50%; }
-.multi .opt-mark { border-radius: 4px; }
-.opt-mark svg { width: .9rem; height: .9rem; opacity: 0; }
-.opt input:checked + .opt-face { border-color: var(--cobalt); background: var(--cobalt-tint); }
-.opt input:checked + .opt-face .opt-mark { background: var(--cobalt); border-color: var(--cobalt); }
-.opt input:checked + .opt-face .opt-mark svg { opacity: 1; }
-.opt input:focus-visible + .opt-face { outline: 3px solid var(--cobalt); outline-offset: 2px; }
-.opt-sub { display: block; color: var(--muted); font-size: .9rem; margin-top: .1rem; }
+.opt-face:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.emo { flex: none; font-size: 1.35rem; line-height: 1; width: 1.6rem; text-align: center; }
+.opt-txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.tick { flex: none; width: 1.6rem; height: 1.6rem; border: 2.5px solid var(--ink); display: grid; place-items: center; background: var(--paper); }
+.single .tick { border-radius: 50%; }
+.multi .tick { border-radius: 7px; }
+.tick svg { width: 1rem; height: 1rem; opacity: 0; transform: scale(.4); transition: transform .15s, opacity .15s; }
+.opt input:checked + .opt-face { background: var(--ink); color: var(--paper); box-shadow: 3px 3px 0 var(--accent), 3px 3px 0 2.5px var(--ink); }
+.opt input:checked + .opt-face .tick { background: var(--accent); border-color: var(--paper); }
+.opt input:checked + .opt-face .tick svg { opacity: 1; transform: none; }
+.opt input:focus-visible + .opt-face { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 /* fields */
 .field { display: block; margin: 0 0 .9rem; }
-.field-label { display: block; font-family: var(--functional); font-weight: 600; font-size: .9rem; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 .35rem; }
-.field-label small { font-family: var(--everyday); font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--muted); font-size: .9rem; }
-.input-wrap { display: flex; align-items: stretch; background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; }
-.input-wrap:focus-within { border-color: var(--cobalt); outline: 3px solid var(--cobalt-tint); }
-.prefix { display: grid; place-items: center; padding: 0 .1rem 0 .85rem; color: var(--muted); font-size: 1.08rem; }
-.input-wrap input, textarea {
-  flex: 1; min-width: 0; border: 0; background: transparent; padding: .8rem .85rem; font-size: 1.08rem; min-height: 3.1rem;
-}
-.input-wrap input:focus, textarea:focus { outline: none; }
-textarea { display: block; width: 100%; min-height: 7.5rem; resize: vertical; line-height: 1.4; background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px; }
-textarea:focus { border-color: var(--cobalt); outline: 3px solid var(--cobalt-tint); }
-.count { text-align: right; color: var(--muted); font-size: .85rem; margin-top: .25rem; }
-.other { margin-top: .1rem; }
-.note { font-style: italic; color: var(--muted); font-size: .95rem; margin: .25rem 0 1rem; }
-.err { color: var(--live); font-weight: 500; font-size: .98rem; margin: 0 0 .75rem; min-height: 1.4em; }
+.field-label { display: block; font-family: var(--head); font-weight: 700; font-size: 1rem; margin: 0 0 .35rem; }
+.field-label small { font-family: var(--body); font-weight: 400; color: var(--soft); font-size: .9rem; }
+.input-wrap { display: flex; align-items: stretch; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; overflow: hidden; }
+.input-wrap:focus-within, textarea:focus { box-shadow: 3px 3px 0 var(--ink); outline: none; }
+.prefix { display: grid; place-items: center; padding: 0 0 0 .9rem; font-weight: 700; font-size: 1.08rem; }
+.input-wrap input, textarea { flex: 1; min-width: 0; border: 0; background: transparent; padding: .8rem .9rem; font-size: 1.08rem; min-height: 3.2rem; }
+.input-wrap input:focus { outline: none; }
+textarea { display: block; width: 100%; min-height: 8rem; resize: vertical; line-height: 1.45; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; }
+::placeholder { color: #707070; }
+.count { text-align: right; color: var(--soft); font-size: .85rem; margin-top: .25rem; }
+.note { color: var(--soft); font-size: .95rem; margin: .1rem 0 .8rem; }
+.err { color: var(--danger); font-weight: 700; font-size: 1rem; margin: 0 0 .6rem; }
+.err:empty { display: none; }
 
 /* buttons */
-.actions { margin-top: auto; padding-top: 1rem; display: grid; gap: .6rem; }
+.actions { margin-top: auto; padding-top: 1.1rem; display: grid; gap: .7rem; }
 .btn {
-  display: flex; align-items: center; justify-content: center; gap: .5rem;
-  min-height: 3.3rem; padding: .7rem 1.1rem; border-radius: 10px; cursor: pointer;
-  font-family: var(--functional); font-weight: 600; font-size: 1.15rem; letter-spacing: .08em; text-transform: uppercase;
-  border: 1.5px solid var(--ink); background: var(--raised); color: var(--ink); text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: 3.5rem; padding: .75rem 1.2rem;
+  border-radius: 99px; border: 2.5px solid var(--ink); cursor: pointer; text-align: center;
+  font-family: var(--head); font-weight: 800; font-size: 1.2rem; letter-spacing: -.01em;
+  background: var(--paper); color: var(--ink); box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
 }
-.btn.primary { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
-.btn.primary:active { background: var(--cobalt-deep); }
-.btn:disabled { background: var(--disabled-fill); border-color: var(--disabled-fill); color: var(--disabled-ink); cursor: not-allowed; }
-.btn:focus-visible, .back:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
-.link { background: none; border: 0; color: var(--cobalt); font-weight: 600; font-size: 1.02rem; padding: .7rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+.btn.primary { background: var(--ink); color: var(--paper); box-shadow: 4px 4px 0 var(--accent), 4px 4px 0 2.5px var(--ink); }
+.btn .arrow { transition: transform .2s; }
+.btn:hover .arrow { transform: translateX(4px); }
+.btn:focus-visible, .back:focus-visible, .link:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.link { background: none; border: 0; color: var(--ink); font-weight: 700; font-size: 1.02rem; padding: .6rem; cursor: pointer; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 
-/* thank-you tag */
-.tag-wrap { display: flex; justify-content: center; margin: 2.75rem 0 1.25rem; isolation: isolate; }
-.tag {
-  position: relative; width: min(17rem, 88%); padding: 2.4rem 1.2rem 1.3rem; text-align: center;
-  transform: rotate(2deg);
-  filter: drop-shadow(0 8px 12px rgba(23,23,23,.16));
-}
-.tag-shape { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; overflow: visible; }
-.tag > p { position: relative; }
-.tag-string { position: absolute; left: 50%; bottom: calc(100% - 1.3rem); width: 5rem; height: 3.2rem; margin-left: -.6rem; overflow: visible; }
-.tag::before { content: ""; position: absolute; z-index: 1; top: .85rem; left: 50%; width: .9rem; height: .9rem; margin-left: -.45rem; border-radius: 50%; border: 2px solid var(--cobalt); background: var(--ground); }
-.tag-kicker { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 .3rem; }
-.tag-title { font-family: var(--display); font-size: min(clamp(2rem, 9vw, 2.5rem), 12vw); line-height: .95; margin: 0 0 .5rem; color: var(--cobalt); }
-.tag-line { font-size: 1rem; margin: 0; }
-.tag-no { font-family: var(--mono); font-size: .72rem; color: var(--muted); margin: .8rem 0 0; letter-spacing: .06em; }
+/* thank-you sticker */
+.badge-wrap { display: flex; justify-content: center; margin: 1rem 0 1.4rem; }
+.badge { width: min(17rem, 90%); text-align: center; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 28px; box-shadow: 6px 6px 0 var(--ink); padding: 1.4rem 1.1rem 1.3rem; transform: rotate(-3deg); animation: land .6s cubic-bezier(.2,.9,.3,1.4); }
+@keyframes land { from { transform: rotate(-14deg) scale(.6); opacity: 0; } to { transform: rotate(-3deg); opacity: 1; } }
+.badge-emo { font-size: 3rem; line-height: 1; margin: 0 0 .4rem; }
+.badge-kicker { font-weight: 700; font-size: .95rem; margin: 0; }
+.badge-title { font-family: var(--head); font-weight: 800; font-size: min(clamp(1.9rem, 8.5vw, 2.4rem), 12vw); line-height: 1; letter-spacing: -.02em; margin: .2rem 0 .55rem; }
+.badge-title span { background: var(--accent); padding: 0 .15em; border-radius: .2em; box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background-color .45s; }
+.badge-line { margin: 0; font-size: 1rem; }
+.confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 5; }
+.confetti i { position: absolute; top: -2rem; width: .7rem; height: 1rem; border: 2px solid var(--ink); border-radius: 3px; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
 
-.foot { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 1rem; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.admin { background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px; padding: 1rem; margin-top: 1rem; font-size: .95rem; }
+.admin { background: var(--paper); border: 2.5px solid var(--ink); border-radius: 16px; padding: 1rem; margin-top: 1rem; font-size: .95rem; }
 .admin p { margin: 0 0 .6rem; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .confetti { display: none; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="bar">
-      <button class="back" id="back" type="button" aria-label="Go back" hidden>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-      </button>
-      <p class="brand" aria-label="Kook">KOOK</p>
-      <span></span>
-    </div>
-    <div class="progress" id="progress" aria-hidden="true"></div>
+  <div class="marquee" aria-hidden="true"><div class="marquee-track" id="mq"></div></div>
+  <header class="bar">
+    <button class="back" id="back" type="button" aria-label="Go back" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="progress" id="progress" hidden><i id="fill"></i></div>
+    <span class="count-chip" id="chip" hidden></span>
   </header>
   <main id="main" tabindex="-1" aria-live="polite"></main>
 </div>
@@ -219,32 +183,45 @@ const EVENT = (params.get("e") || "").slice(0, 60);
 const KIOSK = params.has("kiosk");
 const ADMIN = params.has("admin");
 
-const check = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const check = '<svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const arrow = '<span class="arrow" aria-hidden="true">→</span>';
+
+// background + accent per screen
+const MOODS = [["#FF5FA2", "#C8F25A"], ["#C8F25A", "#FF5FA2"], ["#C4B5FF", "#FFD84D"], ["#FF8A3D", "#C4B5FF"], ["#FFD84D", "#FF5FA2"], ["#6FE3D2", "#FF8A3D"]];
+function mood(i) {
+  const [bg, ac] = MOODS[i % MOODS.length];
+  document.documentElement.style.setProperty("--bg", bg);
+  document.documentElement.style.setProperty("--accent", ac);
+  document.querySelector('meta[name="theme-color"]').content = bg;
+}
+
+const words = ["thrift", "vintage", "preloved", "y2k", "one of one", "drops", "rare finds", "slow fashion"];
+document.getElementById("mq").innerHTML = Array(2).fill(`<span>${words.map(w => `${w}<b>✶</b>`).join("")}</span>`).join("");
 
 /* ---------- questions ---------- */
 const Q = {
   // shoppers
   shop_where: { kind: "multi", q: "Where do you usually find your thrift pieces?", hint: "Pick as many as you like.", other: true,
-    opts: ["Instagram thrift pages", "Pop-ups and flea markets like this one", "Thrift shops", "WhatsApp groups", "Apps or websites", "Swaps with friends"] },
+    opts: [["📱", "Instagram thrift pages"], ["🎪", "Pop-ups and flea markets like this one"], ["🏬", "Thrift shops"], ["💬", "WhatsApp groups"], ["🛒", "Apps or websites"], ["🔁", "Swaps with friends"]] },
   shop_bugs: { kind: "multi", q: "When you shop from Instagram thrift pages, what bugs you the most?", hint: "Be honest, pick all that apply.", other: true,
-    opts: ["“DM for price”", "Things sell out before I even see them", "Not sure about size or condition", "Paying before I can trust the seller", "Slow replies", "Shipping and tracking", "No returns", "Honestly, nothing much"] },
+    opts: [["🙄", "“DM for price”"], ["⚡", "Things sell out before I even see them"], ["📏", "Not sure about size or condition"], ["🤨", "Paying before I can trust the seller"], ["🐢", "Slow replies"], ["📦", "Shipping and tracking"], ["↩️", "No returns"], ["😌", "Honestly, nothing much"]] },
   shop_find: { kind: "multi", q: "How do you usually come across new thrift stores?", other: true,
-    opts: ["Instagram explore and reels", "Friends tell me", "Events like this", "Influencers and creators", "I mostly stick to my favourites"] },
+    opts: [["🔍", "Instagram explore and reels"], ["👯", "Friends tell me"], ["🎪", "Events like this"], ["🌟", "Influencers and creators"], ["💛", "I mostly stick to my favourites"]] },
   shop_often: { kind: "single", q: "How often do you end up buying thrift?",
-    opts: ["Pretty much every week", "A few times a month", "About once a month", "A few times a year", "Today's my first time!"] },
+    opts: [["🔥", "Pretty much every week"], ["✨", "A few times a month"], ["🗓️", "About once a month"], ["🌙", "A few times a year"], ["🐣", "Today's my first time!"]] },
   shop_fix: { kind: "text", q: "If you could fix one thing about shopping thrift, what would it be?", hint: "A line or two is perfect.", placeholder: "I wish…" },
 
   // store owners
   sell_where: { kind: "multi", q: "Where do you sell right now?", other: true,
-    opts: ["Instagram", "My own website", "Pop-ups and events", "WhatsApp", "Other apps or marketplaces", "A physical store"] },
+    opts: [["📱", "Instagram"], ["🌐", "My own website"], ["🎪", "Pop-ups and events"], ["💬", "WhatsApp"], ["🛒", "Other apps or marketplaces"], ["🏬", "A physical store"]] },
   sell_drops: { kind: "single", q: "How do you usually put out new stock?",
-    opts: ["Planned drops at a set time", "I post pieces as they come", "Mostly through stories", "A bit of everything"] },
+    opts: [["⏰", "Planned drops at a set time"], ["📸", "I post pieces as they come"], ["🎞️", "Mostly through stories"], ["🎲", "A bit of everything"]] },
   sell_volume: { kind: "single", q: "Roughly how many pieces do you sell in a month?",
-    opts: ["Under 30", "30 to 100", "100 to 300", "More than 300"] },
+    opts: [["🌱", "Under 30"], ["🌿", "30 to 100"], ["🌳", "100 to 300"], ["🚀", "More than 300"]] },
   sell_time: { kind: "multi", q: "What eats up most of your time?", hint: "Pick all that apply.", other: true,
-    opts: ["Replying to DMs and price questions", "Keeping track of who claimed what", "Checking UPI screenshots", "Shooting and posting", "Packing and shipping", "Returns and disputes", "Finding new buyers"] },
+    opts: [["💬", "Replying to DMs and price questions"], ["📝", "Keeping track of who claimed what"], ["🧾", "Checking UPI screenshots"], ["📸", "Shooting and posting"], ["📦", "Packing and shipping"], ["↩️", "Returns and disputes"], ["🔍", "Finding new buyers"]] },
   sell_pay: { kind: "multi", q: "How do people usually pay you?", other: true,
-    opts: ["UPI straight to me", "A payment link or gateway", "Cash on delivery", "Cash at events"] },
+    opts: [["📲", "UPI straight to me"], ["🔗", "A payment link or gateway"], ["🚚", "Cash on delivery"], ["💵", "Cash at events"]] },
   sell_tried: { kind: "text", q: "Have you tried selling on a website or app? How did it go?", hint: "Never tried? Tell us why not.", placeholder: "We tried… / We never did because…" },
   sell_hard: { kind: "text", q: "What's the hardest part about growing your store?", placeholder: "The hardest part is…" },
   sell_wish: { kind: "text", q: "If someone built something just for thrift sellers, what should it do for you?", placeholder: "It should…" },
@@ -252,9 +229,9 @@ const Q = {
   // want to start
   start_what: { kind: "text", q: "Ooh, nice! What kind of store are you dreaming up?", placeholder: "Vintage denim, Y2K, ethnic…" },
   start_block: { kind: "multi", q: "What's holding you back right now?", hint: "Pick all that apply.", other: true,
-    opts: ["Finding good stock", "Not sure people will buy", "Getting followers", "Handling payments and shipping", "Time", "Money to start"] },
+    opts: [["🧺", "Finding good stock"], ["🤔", "Not sure people will buy"], ["👥", "Getting followers"], ["📦", "Handling payments and shipping"], ["⏳", "Time"], ["💸", "Money to start"]] },
   start_where: { kind: "multi", q: "Where would you want to sell first?",
-    opts: ["Instagram", "Pop-ups and events", "My own website", "WhatsApp", "Not sure yet"] },
+    opts: [["📱", "Instagram"], ["🎪", "Pop-ups and events"], ["🌐", "My own website"], ["💬", "WhatsApp"], ["🤷", "Not sure yet"]] },
   start_help: { kind: "text", q: "What would make starting way easier for you?", placeholder: "It'd be easier if…" },
 };
 
@@ -268,14 +245,14 @@ function questionSet(roles) {
 }
 
 const PERSONA = {
-  store: ["Store builder", "Thanks for sharing how it really works behind the counter."],
-  start: ["Future store owner", "Go build it. We'd love to see what you make."],
-  shop: ["Rare find hunter", "Thanks for telling us how thrifting really feels."],
-  none: ["Good company", "Thanks for chatting with us today."],
+  store: ["👑", "Store boss", "Thanks for telling us how it really works behind the counter."],
+  start: ["🌱", "Future store owner", "Go build it. We can't wait to see what you make."],
+  shop: ["💎", "Rare find hunter", "Thanks for telling us how thrifting really feels."],
+  none: ["✌️", "Good company", "Thanks for chatting with us today."],
 };
 
 /* ---------- state ---------- */
-let S, history;
+let S, history, cur = null;
 function fresh() {
   S = { id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)),
         started: new Date().toISOString(), event: EVENT, interest: "", chat: "", name: "", instagram: "", phone: "",
@@ -284,7 +261,7 @@ function fresh() {
 }
 
 /* ---------- saving (queued, survives bad signal) ---------- */
-const QKEY = "kook-survey-queue", AKEY = "kook-survey-all";
+const QKEY = "survey-queue", AKEY = "survey-all";
 function load(k) { try { return JSON.parse(localStorage.getItem(k) || (k === QKEY ? "[]" : "{}")); } catch { return k === QKEY ? [] : {}; } }
 function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 
@@ -324,7 +301,7 @@ setInterval(flush, 15000);
 /* ---------- rendering ---------- */
 const main = document.getElementById("main");
 const backBtn = document.getElementById("back");
-const progressEl = document.getElementById("progress");
+const progressEl = document.getElementById("progress"), fillEl = document.getElementById("fill"), chipEl = document.getElementById("chip");
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 function go(step, push = true) {
@@ -332,11 +309,11 @@ function go(step, push = true) {
   cur = step;
   render();
 }
-let cur = null;
 backBtn.onclick = () => { if (history.length) { cur = history.pop(); render(); } };
 
 function setProgress(i, n) {
-  progressEl.innerHTML = n ? Array.from({ length: n }, (_, k) => `<span class="${k <= i ? "on" : ""}"></span>`).join("") : "";
+  progressEl.hidden = chipEl.hidden = !n;
+  if (n) { fillEl.style.width = `${Math.max(8, (i + 1) / n * 100)}%`; chipEl.textContent = `${i + 1}/${n}`; }
 }
 
 function render() {
@@ -346,78 +323,79 @@ function render() {
   const el = document.createElement("section");
   el.className = "step";
   main.appendChild(el);
+  setProgress(0, 0);
   STEPS[step.name](el, step);
   window.scrollTo(0, 0);
   const h = el.querySelector("h1, h2, legend");
   if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
 }
 
-function choiceList(name, kind, opts, chosen, otherVal) {
+// opts: [emoji, label] or {v, e, l}
+function choiceList(name, kind, opts, chosen) {
   const type = kind === "single" ? "radio" : "checkbox";
-  return `<div class="opts ${kind}">` + opts.map((o, i) => {
-    const val = typeof o === "string" ? o : o.v;
-    const label = typeof o === "string" ? esc(o) : `${esc(o.l)}${o.sub ? `<span class="opt-sub">${esc(o.sub)}</span>` : ""}`;
-    const on = Array.isArray(chosen) ? chosen.includes(val) : chosen === val;
-    return `<label class="opt"><input type="${type}" name="${name}" value="${esc(val)}" ${on ? "checked" : ""}><span class="opt-face"><span class="opt-mark">${check}</span><span>${label}</span></span></label>`;
+  return `<div class="opts ${kind}">` + opts.map(o => {
+    const [e, l, v] = Array.isArray(o) ? [o[0], o[1], o[1]] : [o.e, o.l, o.v];
+    const on = Array.isArray(chosen) ? chosen.includes(v) : chosen === v;
+    return `<label class="opt"><input type="${type}" name="${name}" value="${esc(v)}" ${on ? "checked" : ""}><span class="opt-face"><span class="emo" aria-hidden="true">${e}</span><span class="opt-txt">${esc(l)}</span><span class="tick">${check}</span></span></label>`;
   }).join("") + `</div>`;
 }
+const optValues = q => q.opts.map(o => o[1]);
 
 const STEPS = {
   welcome(el) {
-    setProgress(0, 0);
+    mood(0);
     el.innerHTML = `
-      <div class="ticket" aria-hidden="true"><div class="ticket-inner">
-        <div class="ticket-main"><p class="ticket-kicker">Hey, it's us again</p><p class="ticket-title">You talked to us today</p></div>
-        <div class="ticket-perf"></div>
-        <div class="stamp">${esc(EVENT || "Met at the market")}</div>
-      </div></div>
-      <h1 class="hero">We're building <em>Instagram</em> for fashion.</h1>
-      <p class="lede">A place to discover fashion and actually shop it, starting with thrift.</p>
+      <div class="sticker-row">
+        <div class="hello"><small>${EVENT ? esc(EVENT) + " · " : ""}hey, it's us again</small>You talked to us today!</div>
+        <div class="blob" aria-hidden="true">👋</div>
+      </div>
+      <h1 class="hero">We're building <span class="hl">Instagram</span> for fashion.</h1>
+      <p class="lede">A place to discover fashion and actually shop it. Starting with thrift.</p>
       <fieldset><legend class="q">Is this something you'd be into?</legend>
-      ${choiceList("interest", "single", ["Yes, sounds great!", "Maybe, tell me more", "Not really my thing"], S.interest)}</fieldset>`;
+      ${choiceList("interest", "single", [["😍", "Yes, sounds great!"], ["🤔", "Maybe, tell me more"], ["🙅", "Not really my thing"]], S.interest)}</fieldset>`;
     el.querySelectorAll("input").forEach(i => i.onchange = () => {
       S.interest = i.value;
-      setTimeout(() => go({ name: "chat" }), 180);
+      setTimeout(() => go({ name: "chat" }), 220);
     });
   },
 
   chat(el) {
-    setProgress(0, 0);
+    mood(1);
     el.innerHTML = `
-      <p class="eyebrow">Quick one</p>
-      <fieldset><legend class="q">Would you be comfortable talking to us a bit more about it?</legend>
+      <p class="kicker">☕ quick one</p>
+      <fieldset><legend class="q">Would you be comfortable talking to us a bit more about it in the future?</legend>
       <p class="hint">Just a short chat, whenever suits you.</p>
-      ${choiceList("chat", "single", ["Sure, happy to!", "Maybe, a quick one", "No thanks"], S.chat)}</fieldset>`;
+      ${choiceList("chat", "single", [["🙌", "Sure, happy to!"], ["👌", "Maybe, a quick one"], ["🙂", "No thanks"]], S.chat)}</fieldset>`;
     el.querySelectorAll("input").forEach(i => i.onchange = () => {
       S.chat = i.value;
-      setTimeout(() => go({ name: i.value === "No thanks" ? "who" : "contact" }), 180);
+      setTimeout(() => go({ name: i.value === "No thanks" ? "who" : "contact" }), 220);
     });
   },
 
   contact(el) {
-    setProgress(0, 0);
+    mood(2);
     el.innerHTML = `
-      <p class="eyebrow">Yay</p>
+      <p class="kicker">🎉 yay</p>
       <h2 class="q">Where can we find you?</h2>
-      <p class="hint">Instagram or phone, whichever you prefer. One is enough.</p>
+      <p class="hint">Instagram or phone, whichever you like. One is enough.</p>
       <form id="f" novalidate>
         <label class="field"><span class="field-label">Instagram</span>
-          <span class="input-wrap"><span class="prefix" aria-hidden="true">@</span><input id="ig" name="instagram" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="text" maxlength="40" value="${esc(S.instagram)}" aria-describedby="err"></span></label>
+          <span class="input-wrap"><span class="prefix" aria-hidden="true">@</span><input id="ig" name="instagram" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="40" placeholder="yourhandle" value="${esc(S.instagram.replace(/^@/, ""))}" aria-describedby="err"></span></label>
         <label class="field"><span class="field-label">Phone or WhatsApp</span>
-          <span class="input-wrap"><span class="prefix" aria-hidden="true">+91</span><input id="ph" name="phone" type="tel" autocomplete="tel-national" inputmode="tel" maxlength="16" value="${esc(S.phone)}" aria-describedby="err"></span></label>
+          <span class="input-wrap"><span class="prefix" aria-hidden="true">+91</span><input id="ph" name="phone" type="tel" autocomplete="tel-national" inputmode="tel" maxlength="16" placeholder="98765 43210" value="${esc(S.phone)}" aria-describedby="err"></span></label>
         <label class="field"><span class="field-label">Your name <small>(optional)</small></span>
           <span class="input-wrap"><input id="nm" name="name" autocomplete="given-name" maxlength="60" value="${esc(S.name)}"></span></label>
         <p class="err" id="err" role="alert"></p>
-        <p class="note">We'll only use this to get in touch about what we're building. No spam, promise.</p>
-        <div class="actions"><button class="btn primary" type="submit">Next</button></div>
+        <p class="note">🔒 We'll only use this to get in touch about what we're building. No spam, promise.</p>
+        <div class="actions"><button class="btn primary" type="submit">Next ${arrow}</button></div>
       </form>`;
     el.querySelector("#f").onsubmit = e => {
       e.preventDefault();
-      const ig = el.querySelector("#ig").value.trim().replace(/^@+/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?].*$/, "");
+      const ig = el.querySelector("#ig").value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@+/, "").replace(/[/?].*$/, "");
       const phDigits = el.querySelector("#ph").value.replace(/\D/g, "").replace(/^(91|0)(?=\d{10}$)/, "");
       const err = el.querySelector("#err");
       if (!ig && !phDigits) { err.textContent = "Add your Instagram or your phone number so we can reach you."; return; }
-      if (phDigits && phDigits.length !== 10) { err.textContent = "That phone number looks short. It should be 10 digits."; el.querySelector("#ph").focus(); return; }
+      if (phDigits && phDigits.length !== 10) { err.textContent = "That phone number doesn't look right. It should be 10 digits."; el.querySelector("#ph").focus(); return; }
       if (ig && !/^[A-Za-z0-9._]{1,30}$/.test(ig)) { err.textContent = "Instagram handles only use letters, numbers, dots and underscores."; el.querySelector("#ig").focus(); return; }
       S.instagram = ig ? "@" + ig : ""; S.phone = phDigits; S.name = el.querySelector("#nm").value.trim();
       save("contact");
@@ -426,18 +404,18 @@ const STEPS = {
   },
 
   who(el) {
-    setProgress(0, 0);
+    mood(3);
     el.innerHTML = `
-      <p class="eyebrow">Tell us about you</p>
+      <p class="kicker">👀 about you</p>
       <fieldset><legend class="q">Which of these sound like you?</legend>
       <p class="hint">Pick all that fit.</p>
       ${choiceList("roles", "multi", [
-        { v: "shop", l: "I like to shop" },
-        { v: "store", l: "I run a thrift store" },
-        { v: "start", l: "I want to start a thrift store" },
+        { v: "shop", e: "🛍️", l: "I like to shop" },
+        { v: "store", e: "🏪", l: "I run a thrift store" },
+        { v: "start", e: "🌱", l: "I want to start a thrift store" },
       ], S.roles)}</fieldset>
       <p class="err" id="err" role="alert"></p>
-      <div class="actions"><button class="btn primary" id="next" type="button">Next</button></div>`;
+      <div class="actions"><button class="btn primary" id="next" type="button">Next ${arrow}</button></div>`;
     el.querySelector("#next").onclick = () => {
       const roles = [...el.querySelectorAll("input:checked")].map(i => i.value);
       if (!roles.length) { el.querySelector("#err").textContent = "Pick at least one."; return; }
@@ -448,13 +426,17 @@ const STEPS = {
   },
 
   offer(el) {
+    mood(4);
     const n = questionSet(S.roles).length;
-    setProgress(0, 0);
+    const topic = S.roles.includes("store") ? "selling thrift" : S.roles.includes("start") ? "starting out" : "thrift shopping";
     el.innerHTML = `
-      <h1 class="hero">Got two <em>minutes?</em></h1>
-      <p class="lede">We'd love your honest take. ${n} quick questions about how ${S.roles.includes("store") ? "selling thrift" : S.roles.includes("start") ? "starting out" : "thrift shopping"} works for you today. No right answers.</p>
+      <div class="card">
+        <p class="kicker">⏱️ ${n} questions · 2 mins</p>
+        <h1 class="hero">Got two <span class="hl">minutes?</span></h1>
+        <p class="lede" style="margin:0">We'd love your honest take on how ${topic} works for you today. No right answers, no sales pitch.</p>
+      </div>
       <div class="actions">
-        <button class="btn primary" id="yes" type="button">Sure, let's go</button>
+        <button class="btn primary" id="yes" type="button">Sure, let's go ${arrow}</button>
         <button class="btn" id="no" type="button">I'm good for now</button>
       </div>`;
     el.querySelector("#yes").onclick = () => go({ name: "question", i: 0 });
@@ -464,27 +446,29 @@ const STEPS = {
   question(el, step) {
     const ids = questionSet(S.roles);
     const id = ids[step.i], q = Q[id], n = ids.length;
+    mood(5 + step.i);
     setProgress(step.i, n);
     const prev = S.answers[id];
     const last = step.i === n - 1;
     let body;
     if (q.kind === "text") {
-      body = `<h2 class="q" id="qh">${esc(q.q)}</h2>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
+      body = `<h2 class="q">${esc(q.q)}</h2>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
         <label class="sr" for="ta">${esc(q.q)}</label>
         <textarea id="ta" maxlength="600" placeholder="${esc(q.placeholder || "")}">${esc(prev || "")}</textarea>
         <p class="count" id="cnt" aria-hidden="true"></p>`;
     } else {
+      const vals = optValues(q);
       const chosen = prev || (q.kind === "multi" ? [] : "");
-      const base = Array.isArray(chosen) ? chosen.filter(v => q.opts.includes(v)) : chosen;
-      const otherPrev = Array.isArray(chosen) ? chosen.find(v => !q.opts.includes(v)) || "" : "";
+      const base = Array.isArray(chosen) ? chosen.filter(v => vals.includes(v)) : chosen;
+      const otherPrev = Array.isArray(chosen) ? chosen.find(v => !vals.includes(v)) || "" : "";
       body = `<fieldset><legend class="q">${esc(q.q)}</legend>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
         ${choiceList(id, q.kind, q.opts, base)}
-        ${q.other ? `<label class="field other"><span class="field-label">Something else? <small>(optional)</small></span><span class="input-wrap"><input id="oth" maxlength="120" value="${esc(otherPrev.replace(/^Other: /, ""))}"></span></label>` : ""}
+        ${q.other ? `<label class="field"><span class="field-label">Something else? <small>(optional)</small></span><span class="input-wrap"><input id="oth" maxlength="120" value="${esc(otherPrev.replace(/^Other: /, ""))}"></span></label>` : ""}
         </fieldset>`;
     }
-    el.innerHTML = `<p class="eyebrow">Question ${step.i + 1} of ${n}</p>${body}
+    el.innerHTML = `${body}
       <div class="actions">
-        <button class="btn primary" id="next" type="button">${last ? "Send my answers" : "Next"}</button>
+        <button class="btn primary" id="next" type="button">${last ? "Send my answers 🚀" : `Next ${arrow}`}</button>
         <button class="link" id="skip" type="button">Skip this one</button>
       </div>`;
 
@@ -508,44 +492,58 @@ const STEPS = {
       ta.oninput = upd; upd();
     }
     if (q.kind === "single" && !q.other) {
-      el.querySelectorAll("input").forEach(i => i.onchange = () => setTimeout(() => advance(false), 180));
+      el.querySelectorAll("input").forEach(i => i.onchange = () => setTimeout(() => advance(false), 220));
     }
     el.querySelector("#next").onclick = () => advance(false);
     el.querySelector("#skip").onclick = () => advance(true);
   },
 
   done(el) {
-    setProgress(0, 0);
+    mood(0);
     const key = S.roles.includes("store") ? "store" : S.roles.includes("start") ? "start" : S.roles.includes("shop") ? "shop" : "none";
-    const [title, line] = PERSONA[key];
-    const tagNo = S.id.replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase();
+    const [emo, title, line] = PERSONA[key];
     const contact = S.chat && S.chat !== "No thanks" && (S.instagram || S.phone);
     el.innerHTML = `
-      <h1 class="hero">Thank <em>you!</em></h1>
-      <p class="lede">${contact ? `We'll reach out on ${S.instagram ? "Instagram" : "WhatsApp"} soon.` : "That really helps."} Enjoy the rest of the market.</p>
-      <div class="tag-wrap"><div class="tag" role="img" aria-label="${esc(title)}. ${esc(line)}">
-        <svg class="tag-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M24 1 H76 L99 13 V96 Q99 99 96 99 H4 Q1 99 1 96 V13 Z" fill="#FFFDF8" stroke="#171717" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
-        <svg class="tag-string" viewBox="0 0 80 52" aria-hidden="true"><path d="M10 50 C 14 30, 40 34, 46 18 S 66 2, 78 2" fill="none" stroke="#2446C5" stroke-width="2" stroke-linecap="round"/></svg>
-        <p class="tag-kicker">You're a</p>
-        <p class="tag-title">${esc(title)}</p>
-        <p class="tag-line">${esc(line)}</p>
-        <p class="tag-no">KOOK · NO. ${esc(tagNo)}</p>
+      <h1 class="hero">Thank <span class="hl">you!</span></h1>
+      <p class="lede">${contact ? `We'll slide into your ${S.instagram ? "DMs" : "WhatsApp"} soon.` : "That really helps."} Enjoy the rest of the market ✨</p>
+      <div class="badge-wrap"><div class="badge" role="img" aria-label="You're a ${esc(title)}. ${esc(line)}">
+        <p class="badge-emo" aria-hidden="true">${emo}</p>
+        <p class="badge-kicker">You're a</p>
+        <p class="badge-title"><span>${esc(title)}</span></p>
+        <p class="badge-line">${esc(line)}</p>
       </div></div>
-      <div class="actions">${KIOSK ? `<button class="btn primary" id="again" type="button">Next person</button>` : ""}</div>
+      <div class="actions">${KIOSK ? `<button class="btn primary" id="again" type="button">Next person ${arrow}</button>` : ""}</div>
       ${ADMIN ? adminPanel() : ""}`;
+    if (!ADMIN) confetti();
     if (KIOSK) {
-      const again = el.querySelector("#again");
-      again.onclick = restart;
       const t = setTimeout(restart, 45000);
-      again.addEventListener("click", () => clearTimeout(t));
+      el.querySelector("#again").onclick = () => { clearTimeout(t); restart(); };
     }
     wireAdmin(el);
   },
 };
 
+function confetti() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box = document.createElement("div");
+  box.className = "confetti"; box.setAttribute("aria-hidden", "true");
+  const cols = ["#FF5FA2", "#C8F25A", "#C4B5FF", "#FF8A3D", "#FFD84D", "#6FE3D2"];
+  for (let k = 0; k < 36; k++) {
+    const i = document.createElement("i");
+    i.style.left = Math.random() * 100 + "%";
+    i.style.background = cols[k % cols.length];
+    i.style.animationDuration = 1.6 + Math.random() * 1.6 + "s";
+    i.style.animationDelay = Math.random() * .4 + "s";
+    i.style.transform = `rotate(${Math.random() * 360}deg)`;
+    box.appendChild(i);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 4000);
+}
+
 function adminPanel() {
   const all = Object.keys(load(AKEY)).length, waiting = load(QKEY).length;
-  return `<div class="admin"><p><strong>On this device:</strong> ${all} people · ${waiting} waiting to send${ENDPOINT ? "" : " (no Sheet connected yet)"}.</p>
+  return `<div class="admin"><p><strong>On this phone:</strong> ${all} people · ${waiting} waiting to send${ENDPOINT ? "" : " (no Sheet connected yet)"}.</p>
     <button class="btn" id="dl" type="button">Download backup (CSV)</button></div>`;
 }
 function wireAdmin(el) {
@@ -558,7 +556,7 @@ function wireAdmin(el) {
     const csv = [cols.map(cell).join(","), ...rows.map(r => cols.map(c => cell(r[c])).join(","))].join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = "kook-event-answers.csv";
+    a.download = "event-answers.csv";
     a.click();
   };
 }
@@ -566,8 +564,7 @@ function wireAdmin(el) {
 function restart() { fresh(); cur = null; go({ name: "welcome" }, false); }
 
 fresh();
-if (ADMIN && !KIOSK) { cur = { name: "done" }; S.roles = []; }
-go(ADMIN && !KIOSK ? { name: "done" } : { name: "welcome" }, false);
+go({ name: ADMIN && !KIOSK ? "done" : "welcome" }, false);
 flush();
 </script>
 </body>
