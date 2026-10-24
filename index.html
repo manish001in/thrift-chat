@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kook · Quick Chat</title>
+<meta name="description" content="You talked to us today. A few quick questions about shopping and selling thrift.">
+<meta name="theme-color" content="#F4F0E8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@500;600;800&family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Kook colours (Golden Book §5.2, design-foundation-v2/colour.ts) */
+:root {
+  --ground: #F4F0E8;
+  --raised: #FFFDF8;
+  --ink: #171717;
+  --muted: #5E584F;
+  --line: #D6CEC1;
+  --cobalt: #2446C5;
+  --cobalt-deep: #17379F;
+  --cobalt-tint: #EEF2FF;
+  --live: #C63C1E;
+  --disabled-fill: #E4DED3;
+  --disabled-ink: #6F6A62;
+  --display: "Bebas Neue", "Barlow Condensed", Impact, sans-serif;
+  --functional: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --everyday: "Barlow Semi Condensed", "Barlow", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--ground);
+  /* one subtle paper grain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--ink);
+  font-family: var(--everyday);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+button, input, textarea { font: inherit; color: inherit; }
+.wrap {
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: max(env(safe-area-inset-top), 0.75rem) 1rem max(env(safe-area-inset-bottom), 1.25rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* top bar */
+.bar { display: grid; grid-template-columns: 2.75rem 1fr 2.75rem; align-items: center; min-height: 3rem; }
+.brand { font-family: var(--display); font-size: 1.85rem; letter-spacing: .04em; text-align: center; line-height: 1; margin: 0; }
+.back {
+  width: 2.75rem; height: 2.75rem; border: 0; background: none; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+}
+.back svg { width: 1.4rem; height: 1.4rem; }
+.back[hidden] { visibility: hidden; display: grid; }
+.progress { display: flex; gap: .25rem; margin: .5rem 0 0; min-height: .3rem; }
+.progress span { flex: 1; height: .3rem; border-radius: 2px; background: var(--line); }
+.progress span.on { background: var(--cobalt); }
+
+main { flex: 1; display: flex; flex-direction: column; padding-top: 1.1rem; }
+main:focus, [tabindex="-1"]:focus { outline: none; }
+.step { flex: 1; display: flex; flex-direction: column; animation: in .28s ease-out; }
+@keyframes in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .step { animation: none; } }
+
+.eyebrow { font-family: var(--functional); font-weight: 600; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cobalt); margin: 0 0 .5rem; }
+.hero { font-family: var(--display); font-weight: 400; font-size: min(clamp(2.6rem, 11vw, 3.4rem), 16vw); line-height: .95; letter-spacing: .01em; margin: 0 0 .75rem; }
+.hero em { font-style: normal; color: var(--cobalt); }
+.lede { font-size: 1.1rem; line-height: 1.4; margin: 0 0 1.25rem; max-width: 26rem; }
+.q { font-family: var(--everyday); font-weight: 500; font-size: clamp(1.4rem, 6vw, 1.65rem); line-height: 1.2; margin: 0 0 .35rem; }
+.hint { color: var(--muted); font-size: .95rem; margin: 0 0 1rem; }
+
+/* ticket on the welcome step */
+.ticket {
+  position: relative; margin: .25rem 0 1.4rem; padding: 1rem 1.1rem 1rem 1.25rem;
+  background: var(--raised);
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(23,23,23,.06), 0 8px 22px -14px rgba(23,23,23,.35);
+  transform: rotate(-1.2deg);
+  -webkit-mask: radial-gradient(circle .65rem at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle .65rem at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle .65rem at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle .65rem at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+.ticket::before { content: ""; position: absolute; inset: .45rem; border: 1.5px solid var(--cobalt); border-radius: 3px; pointer-events: none; }
+.ticket { container-type: inline-size; }
+.ticket-inner { display: flex; align-items: center; gap: .9rem; }
+@container (max-width: 19rem) {
+  .ticket-inner { flex-direction: column; align-items: flex-start; }
+  .ticket-perf { display: none; }
+  .stamp { align-self: flex-end; margin-top: -.5rem; }
+}
+.ticket-main { flex: 1; min-width: 0; }
+.ticket-kicker { font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin: 0 0 .2rem; }
+.ticket-title { font-family: var(--display); font-size: min(clamp(1.7rem, 7.5vw, 2.1rem), 11vw); line-height: .95; color: var(--cobalt); margin: 0; letter-spacing: .02em; }
+.ticket-perf { align-self: stretch; border-left: 2px dashed var(--line); }
+.stamp {
+  flex: none; width: 4.6rem; height: 4.6rem; border-radius: 50%;
+  border: 2px solid var(--live); color: var(--live);
+  display: grid; place-items: center; text-align: center;
+  font-family: var(--functional); font-weight: 800; font-size: .7rem; line-height: 1.05; letter-spacing: .06em; text-transform: uppercase;
+  transform: rotate(12deg);
+  box-shadow: inset 0 0 0 3px var(--raised), inset 0 0 0 4px var(--live);
+  padding: .4rem;
+  word-break: break-word;
+}
+
+/* options */
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+legend { padding: 0; }
+.opts { display: grid; gap: .55rem; margin: .25rem 0 1rem; }
+.opt { position: relative; display: block; }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opt-face {
+  display: flex; align-items: center; gap: .75rem;
+  min-height: 3.25rem; padding: .7rem .9rem;
+  background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px;
+  font-size: 1.08rem; line-height: 1.25; cursor: pointer;
+  transition: border-color .12s, background-color .12s, transform .08s;
+}
+.opt-face:active { transform: scale(.985); }
+.opt-mark {
+  flex: none; width: 1.35rem; height: 1.35rem; border: 1.5px solid var(--muted); display: grid; place-items: center;
+  background: var(--raised);
+}
+.single .opt-mark { border-radius: 50%; }
+.multi .opt-mark { border-radius: 4px; }
+.opt-mark svg { width: .9rem; height: .9rem; opacity: 0; }
+.opt input:checked + .opt-face { border-color: var(--cobalt); background: var(--cobalt-tint); }
+.opt input:checked + .opt-face .opt-mark { background: var(--cobalt); border-color: var(--cobalt); }
+.opt input:checked + .opt-face .opt-mark svg { opacity: 1; }
+.opt input:focus-visible + .opt-face { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+.opt-sub { display: block; color: var(--muted); font-size: .9rem; margin-top: .1rem; }
+
+/* fields */
+.field { display: block; margin: 0 0 .9rem; }
+.field-label { display: block; font-family: var(--functional); font-weight: 600; font-size: .9rem; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 .35rem; }
+.field-label small { font-family: var(--everyday); font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--muted); font-size: .9rem; }
+.input-wrap { display: flex; align-items: stretch; background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; }
+.input-wrap:focus-within { border-color: var(--cobalt); outline: 3px solid var(--cobalt-tint); }
+.prefix { display: grid; place-items: center; padding: 0 .1rem 0 .85rem; color: var(--muted); font-size: 1.08rem; }
+.input-wrap input, textarea {
+  flex: 1; min-width: 0; border: 0; background: transparent; padding: .8rem .85rem; font-size: 1.08rem; min-height: 3.1rem;
+}
+.input-wrap input:focus, textarea:focus { outline: none; }
+textarea { display: block; width: 100%; min-height: 7.5rem; resize: vertical; line-height: 1.4; background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px; }
+textarea:focus { border-color: var(--cobalt); outline: 3px solid var(--cobalt-tint); }
+.count { text-align: right; color: var(--muted); font-size: .85rem; margin-top: .25rem; }
+.other { margin-top: .1rem; }
+.note { font-style: italic; color: var(--muted); font-size: .95rem; margin: .25rem 0 1rem; }
+.err { color: var(--live); font-weight: 500; font-size: .98rem; margin: 0 0 .75rem; min-height: 1.4em; }
+
+/* buttons */
+.actions { margin-top: auto; padding-top: 1rem; display: grid; gap: .6rem; }
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  min-height: 3.3rem; padding: .7rem 1.1rem; border-radius: 10px; cursor: pointer;
+  font-family: var(--functional); font-weight: 600; font-size: 1.15rem; letter-spacing: .08em; text-transform: uppercase;
+  border: 1.5px solid var(--ink); background: var(--raised); color: var(--ink); text-align: center;
+}
+.btn.primary { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
+.btn.primary:active { background: var(--cobalt-deep); }
+.btn:disabled { background: var(--disabled-fill); border-color: var(--disabled-fill); color: var(--disabled-ink); cursor: not-allowed; }
+.btn:focus-visible, .back:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+.link { background: none; border: 0; color: var(--cobalt); font-weight: 600; font-size: 1.02rem; padding: .7rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+/* thank-you tag */
+.tag-wrap { display: flex; justify-content: center; margin: 2.75rem 0 1.25rem; isolation: isolate; }
+.tag {
+  position: relative; width: min(17rem, 88%); padding: 2.4rem 1.2rem 1.3rem; text-align: center;
+  transform: rotate(2deg);
+  filter: drop-shadow(0 8px 12px rgba(23,23,23,.16));
+}
+.tag-shape { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; overflow: visible; }
+.tag > p { position: relative; }
+.tag-string { position: absolute; left: 50%; bottom: calc(100% - 1.3rem); width: 5rem; height: 3.2rem; margin-left: -.6rem; overflow: visible; }
+.tag::before { content: ""; position: absolute; z-index: 1; top: .85rem; left: 50%; width: .9rem; height: .9rem; margin-left: -.45rem; border-radius: 50%; border: 2px solid var(--cobalt); background: var(--ground); }
+.tag-kicker { font-family: var(--mono); font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 .3rem; }
+.tag-title { font-family: var(--display); font-size: min(clamp(2rem, 9vw, 2.5rem), 12vw); line-height: .95; margin: 0 0 .5rem; color: var(--cobalt); }
+.tag-line { font-size: 1rem; margin: 0; }
+.tag-no { font-family: var(--mono); font-size: .72rem; color: var(--muted); margin: .8rem 0 0; letter-spacing: .06em; }
+
+.foot { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 1rem; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.admin { background: var(--raised); border: 1.5px solid var(--line); border-radius: 10px; padding: 1rem; margin-top: 1rem; font-size: .95rem; }
+.admin p { margin: 0 0 .6rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="bar">
+      <button class="back" id="back" type="button" aria-label="Go back" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      </button>
+      <p class="brand" aria-label="Kook">KOOK</p>
+      <span></span>
+    </div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+  </header>
+  <main id="main" tabindex="-1" aria-live="polite"></main>
+</div>
+
+<script>
+/* ---------- config ---------- */
+// Google Apps Script web-app URL (see apps-script.gs). Empty = answers stay on this device only.
+const ENDPOINT = "";
+const params = new URLSearchParams(location.search);
+const EVENT = (params.get("e") || "").slice(0, 60);
+const KIOSK = params.has("kiosk");
+const ADMIN = params.has("admin");
+
+const check = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* ---------- questions ---------- */
+const Q = {
+  // shoppers
+  shop_where: { kind: "multi", q: "Where do you usually find your thrift pieces?", hint: "Pick as many as you like.", other: true,
+    opts: ["Instagram thrift pages", "Pop-ups and flea markets like this one", "Thrift shops", "WhatsApp groups", "Apps or websites", "Swaps with friends"] },
+  shop_bugs: { kind: "multi", q: "When you shop from Instagram thrift pages, what bugs you the most?", hint: "Be honest, pick all that apply.", other: true,
+    opts: ["“DM for price”", "Things sell out before I even see them", "Not sure about size or condition", "Paying before I can trust the seller", "Slow replies", "Shipping and tracking", "No returns", "Honestly, nothing much"] },
+  shop_find: { kind: "multi", q: "How do you usually come across new thrift stores?", other: true,
+    opts: ["Instagram explore and reels", "Friends tell me", "Events like this", "Influencers and creators", "I mostly stick to my favourites"] },
+  shop_often: { kind: "single", q: "How often do you end up buying thrift?",
+    opts: ["Pretty much every week", "A few times a month", "About once a month", "A few times a year", "Today's my first time!"] },
+  shop_fix: { kind: "text", q: "If you could fix one thing about shopping thrift, what would it be?", hint: "A line or two is perfect.", placeholder: "I wish…" },
+
+  // store owners
+  sell_where: { kind: "multi", q: "Where do you sell right now?", other: true,
+    opts: ["Instagram", "My own website", "Pop-ups and events", "WhatsApp", "Other apps or marketplaces", "A physical store"] },
+  sell_drops: { kind: "single", q: "How do you usually put out new stock?",
+    opts: ["Planned drops at a set time", "I post pieces as they come", "Mostly through stories", "A bit of everything"] },
+  sell_volume: { kind: "single", q: "Roughly how many pieces do you sell in a month?",
+    opts: ["Under 30", "30 to 100", "100 to 300", "More than 300"] },
+  sell_time: { kind: "multi", q: "What eats up most of your time?", hint: "Pick all that apply.", other: true,
+    opts: ["Replying to DMs and price questions", "Keeping track of who claimed what", "Checking UPI screenshots", "Shooting and posting", "Packing and shipping", "Returns and disputes", "Finding new buyers"] },
+  sell_pay: { kind: "multi", q: "How do people usually pay you?", other: true,
+    opts: ["UPI straight to me", "A payment link or gateway", "Cash on delivery", "Cash at events"] },
+  sell_tried: { kind: "text", q: "Have you tried selling on a website or app? How did it go?", hint: "Never tried? Tell us why not.", placeholder: "We tried… / We never did because…" },
+  sell_hard: { kind: "text", q: "What's the hardest part about growing your store?", placeholder: "The hardest part is…" },
+  sell_wish: { kind: "text", q: "If someone built something just for thrift sellers, what should it do for you?", placeholder: "It should…" },
+
+  // want to start
+  start_what: { kind: "text", q: "Ooh, nice! What kind of store are you dreaming up?", placeholder: "Vintage denim, Y2K, ethnic…" },
+  start_block: { kind: "multi", q: "What's holding you back right now?", hint: "Pick all that apply.", other: true,
+    opts: ["Finding good stock", "Not sure people will buy", "Getting followers", "Handling payments and shipping", "Time", "Money to start"] },
+  start_where: { kind: "multi", q: "Where would you want to sell first?",
+    opts: ["Instagram", "Pop-ups and events", "My own website", "WhatsApp", "Not sure yet"] },
+  start_help: { kind: "text", q: "What would make starting way easier for you?", placeholder: "It'd be easier if…" },
+};
+
+function questionSet(roles) {
+  if (roles.includes("store")) return ["sell_where", "sell_drops", "sell_volume", "sell_time", "sell_pay", "sell_tried", "sell_hard", "sell_wish"];
+  if (roles.includes("start")) {
+    const s = ["start_what", "start_block", "start_where", "start_help"];
+    return roles.includes("shop") ? ["shop_where", "shop_bugs", "shop_find", ...s] : s;
+  }
+  return ["shop_where", "shop_bugs", "shop_find", "shop_often", "shop_fix"];
+}
+
+const PERSONA = {
+  store: ["Store builder", "Thanks for sharing how it really works behind the counter."],
+  start: ["Future store owner", "Go build it. We'd love to see what you make."],
+  shop: ["Rare find hunter", "Thanks for telling us how thrifting really feels."],
+  none: ["Good company", "Thanks for chatting with us today."],
+};
+
+/* ---------- state ---------- */
+let S, history;
+function fresh() {
+  S = { id: (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)),
+        started: new Date().toISOString(), event: EVENT, interest: "", chat: "", name: "", instagram: "", phone: "",
+        roles: [], answers: {}, stage: "started" };
+  history = [];
+}
+
+/* ---------- saving (queued, survives bad signal) ---------- */
+const QKEY = "kook-survey-queue", AKEY = "kook-survey-all";
+function load(k) { try { return JSON.parse(localStorage.getItem(k) || (k === QKEY ? "[]" : "{}")); } catch { return k === QKEY ? [] : {}; } }
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
+const ROLE_LABEL = { shop: "Shopper", store: "Runs a store", start: "Wants to start" };
+function payload(stage) {
+  const flat = {};
+  for (const [k, v] of Object.entries(S.answers)) flat[k] = Array.isArray(v) ? v.join(", ") : v;
+  return { id: S.id, updated: new Date().toISOString(), started: S.started, event: S.event, stage, kiosk: KIOSK ? "yes" : "",
+           interested: S.interest, chat: S.chat, name: S.name, instagram: S.instagram, phone: S.phone,
+           roles: S.roles.map(r => ROLE_LABEL[r]).join(", "), ...flat };
+}
+function save(stage) {
+  S.stage = stage;
+  const p = payload(stage);
+  const all = load(AKEY); all[p.id] = p; store(AKEY, all);
+  const q = load(QKEY).filter(x => x.id !== p.id); q.push(p); store(QKEY, q);
+  flush();
+}
+let flushing = false;
+async function flush() {
+  if (!ENDPOINT || flushing || !navigator.onLine) return;
+  flushing = true;
+  try {
+    let q = load(QKEY);
+    while (q.length) {
+      const p = q[0];
+      await fetch(ENDPOINT, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(p) });
+      q = load(QKEY).filter(x => !(x.id === p.id && x.updated === p.updated));
+      store(QKEY, q);
+    }
+  } catch { /* offline or blocked: try again later */ }
+  flushing = false;
+}
+addEventListener("online", flush);
+setInterval(flush, 15000);
+
+/* ---------- rendering ---------- */
+const main = document.getElementById("main");
+const backBtn = document.getElementById("back");
+const progressEl = document.getElementById("progress");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function go(step, push = true) {
+  if (push && cur) history.push(cur);
+  cur = step;
+  render();
+}
+let cur = null;
+backBtn.onclick = () => { if (history.length) { cur = history.pop(); render(); } };
+
+function setProgress(i, n) {
+  progressEl.innerHTML = n ? Array.from({ length: n }, (_, k) => `<span class="${k <= i ? "on" : ""}"></span>`).join("") : "";
+}
+
+function render() {
+  const step = cur;
+  backBtn.hidden = !history.length || step.name === "done";
+  main.innerHTML = "";
+  const el = document.createElement("section");
+  el.className = "step";
+  main.appendChild(el);
+  STEPS[step.name](el, step);
+  window.scrollTo(0, 0);
+  const h = el.querySelector("h1, h2, legend");
+  if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+}
+
+function choiceList(name, kind, opts, chosen, otherVal) {
+  const type = kind === "single" ? "radio" : "checkbox";
+  return `<div class="opts ${kind}">` + opts.map((o, i) => {
+    const val = typeof o === "string" ? o : o.v;
+    const label = typeof o === "string" ? esc(o) : `${esc(o.l)}${o.sub ? `<span class="opt-sub">${esc(o.sub)}</span>` : ""}`;
+    const on = Array.isArray(chosen) ? chosen.includes(val) : chosen === val;
+    return `<label class="opt"><input type="${type}" name="${name}" value="${esc(val)}" ${on ? "checked" : ""}><span class="opt-face"><span class="opt-mark">${check}</span><span>${label}</span></span></label>`;
+  }).join("") + `</div>`;
+}
+
+const STEPS = {
+  welcome(el) {
+    setProgress(0, 0);
+    el.innerHTML = `
+      <div class="ticket" aria-hidden="true"><div class="ticket-inner">
+        <div class="ticket-main"><p class="ticket-kicker">Hey, it's us again</p><p class="ticket-title">You talked to us today</p></div>
+        <div class="ticket-perf"></div>
+        <div class="stamp">${esc(EVENT || "Met at the market")}</div>
+      </div></div>
+      <h1 class="hero">We're building <em>Instagram</em> for fashion.</h1>
+      <p class="lede">A place to discover fashion and actually shop it, starting with thrift.</p>
+      <fieldset><legend class="q">Is this something you'd be into?</legend>
+      ${choiceList("interest", "single", ["Yes, sounds great!", "Maybe, tell me more", "Not really my thing"], S.interest)}</fieldset>`;
+    el.querySelectorAll("input").forEach(i => i.onchange = () => {
+      S.interest = i.value;
+      setTimeout(() => go({ name: "chat" }), 180);
+    });
+  },
+
+  chat(el) {
+    setProgress(0, 0);
+    el.innerHTML = `
+      <p class="eyebrow">Quick one</p>
+      <fieldset><legend class="q">Would you be comfortable talking to us a bit more about it?</legend>
+      <p class="hint">Just a short chat, whenever suits you.</p>
+      ${choiceList("chat", "single", ["Sure, happy to!", "Maybe, a quick one", "No thanks"], S.chat)}</fieldset>`;
+    el.querySelectorAll("input").forEach(i => i.onchange = () => {
+      S.chat = i.value;
+      setTimeout(() => go({ name: i.value === "No thanks" ? "who" : "contact" }), 180);
+    });
+  },
+
+  contact(el) {
+    setProgress(0, 0);
+    el.innerHTML = `
+      <p class="eyebrow">Yay</p>
+      <h2 class="q">Where can we find you?</h2>
+      <p class="hint">Instagram or phone, whichever you prefer. One is enough.</p>
+      <form id="f" novalidate>
+        <label class="field"><span class="field-label">Instagram</span>
+          <span class="input-wrap"><span class="prefix" aria-hidden="true">@</span><input id="ig" name="instagram" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="text" maxlength="40" value="${esc(S.instagram)}" aria-describedby="err"></span></label>
+        <label class="field"><span class="field-label">Phone or WhatsApp</span>
+          <span class="input-wrap"><span class="prefix" aria-hidden="true">+91</span><input id="ph" name="phone" type="tel" autocomplete="tel-national" inputmode="tel" maxlength="16" value="${esc(S.phone)}" aria-describedby="err"></span></label>
+        <label class="field"><span class="field-label">Your name <small>(optional)</small></span>
+          <span class="input-wrap"><input id="nm" name="name" autocomplete="given-name" maxlength="60" value="${esc(S.name)}"></span></label>
+        <p class="err" id="err" role="alert"></p>
+        <p class="note">We'll only use this to get in touch about what we're building. No spam, promise.</p>
+        <div class="actions"><button class="btn primary" type="submit">Next</button></div>
+      </form>`;
+    el.querySelector("#f").onsubmit = e => {
+      e.preventDefault();
+      const ig = el.querySelector("#ig").value.trim().replace(/^@+/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?].*$/, "");
+      const phDigits = el.querySelector("#ph").value.replace(/\D/g, "").replace(/^(91|0)(?=\d{10}$)/, "");
+      const err = el.querySelector("#err");
+      if (!ig && !phDigits) { err.textContent = "Add your Instagram or your phone number so we can reach you."; return; }
+      if (phDigits && phDigits.length !== 10) { err.textContent = "That phone number looks short. It should be 10 digits."; el.querySelector("#ph").focus(); return; }
+      if (ig && !/^[A-Za-z0-9._]{1,30}$/.test(ig)) { err.textContent = "Instagram handles only use letters, numbers, dots and underscores."; el.querySelector("#ig").focus(); return; }
+      S.instagram = ig ? "@" + ig : ""; S.phone = phDigits; S.name = el.querySelector("#nm").value.trim();
+      save("contact");
+      go({ name: "who" });
+    };
+  },
+
+  who(el) {
+    setProgress(0, 0);
+    el.innerHTML = `
+      <p class="eyebrow">Tell us about you</p>
+      <fieldset><legend class="q">Which of these sound like you?</legend>
+      <p class="hint">Pick all that fit.</p>
+      ${choiceList("roles", "multi", [
+        { v: "shop", l: "I like to shop" },
+        { v: "store", l: "I run a thrift store" },
+        { v: "start", l: "I want to start a thrift store" },
+      ], S.roles)}</fieldset>
+      <p class="err" id="err" role="alert"></p>
+      <div class="actions"><button class="btn primary" id="next" type="button">Next</button></div>`;
+    el.querySelector("#next").onclick = () => {
+      const roles = [...el.querySelectorAll("input:checked")].map(i => i.value);
+      if (!roles.length) { el.querySelector("#err").textContent = "Pick at least one."; return; }
+      S.roles = roles;
+      save("roles");
+      go({ name: "offer" });
+    };
+  },
+
+  offer(el) {
+    const n = questionSet(S.roles).length;
+    setProgress(0, 0);
+    el.innerHTML = `
+      <h1 class="hero">Got two <em>minutes?</em></h1>
+      <p class="lede">We'd love your honest take. ${n} quick questions about how ${S.roles.includes("store") ? "selling thrift" : S.roles.includes("start") ? "starting out" : "thrift shopping"} works for you today. No right answers.</p>
+      <div class="actions">
+        <button class="btn primary" id="yes" type="button">Sure, let's go</button>
+        <button class="btn" id="no" type="button">I'm good for now</button>
+      </div>`;
+    el.querySelector("#yes").onclick = () => go({ name: "question", i: 0 });
+    el.querySelector("#no").onclick = () => { save("done-skipped"); go({ name: "done" }); };
+  },
+
+  question(el, step) {
+    const ids = questionSet(S.roles);
+    const id = ids[step.i], q = Q[id], n = ids.length;
+    setProgress(step.i, n);
+    const prev = S.answers[id];
+    const last = step.i === n - 1;
+    let body;
+    if (q.kind === "text") {
+      body = `<h2 class="q" id="qh">${esc(q.q)}</h2>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
+        <label class="sr" for="ta">${esc(q.q)}</label>
+        <textarea id="ta" maxlength="600" placeholder="${esc(q.placeholder || "")}">${esc(prev || "")}</textarea>
+        <p class="count" id="cnt" aria-hidden="true"></p>`;
+    } else {
+      const chosen = prev || (q.kind === "multi" ? [] : "");
+      const base = Array.isArray(chosen) ? chosen.filter(v => q.opts.includes(v)) : chosen;
+      const otherPrev = Array.isArray(chosen) ? chosen.find(v => !q.opts.includes(v)) || "" : "";
+      body = `<fieldset><legend class="q">${esc(q.q)}</legend>${q.hint ? `<p class="hint">${esc(q.hint)}</p>` : ""}
+        ${choiceList(id, q.kind, q.opts, base)}
+        ${q.other ? `<label class="field other"><span class="field-label">Something else? <small>(optional)</small></span><span class="input-wrap"><input id="oth" maxlength="120" value="${esc(otherPrev.replace(/^Other: /, ""))}"></span></label>` : ""}
+        </fieldset>`;
+    }
+    el.innerHTML = `<p class="eyebrow">Question ${step.i + 1} of ${n}</p>${body}
+      <div class="actions">
+        <button class="btn primary" id="next" type="button">${last ? "Send my answers" : "Next"}</button>
+        <button class="link" id="skip" type="button">Skip this one</button>
+      </div>`;
+
+    const read = () => {
+      if (q.kind === "text") return el.querySelector("#ta").value.trim();
+      const v = [...el.querySelectorAll("input:checked")].map(i => i.value);
+      const o = el.querySelector("#oth")?.value.trim();
+      if (q.kind === "single") return v[0] || (o ? "Other: " + o : "");
+      if (o) v.push("Other: " + o);
+      return v;
+    };
+    const advance = (skip) => {
+      const v = skip ? "" : read();
+      if (v && v.length) S.answers[id] = v; else delete S.answers[id];
+      if (last) { save("done"); go({ name: "done" }); }
+      else { save("q" + (step.i + 1)); go({ name: "question", i: step.i + 1 }); }
+    };
+    if (q.kind === "text") {
+      const ta = el.querySelector("#ta"), cnt = el.querySelector("#cnt");
+      const upd = () => cnt.textContent = ta.value.length > 450 ? `${600 - ta.value.length} left` : "";
+      ta.oninput = upd; upd();
+    }
+    if (q.kind === "single" && !q.other) {
+      el.querySelectorAll("input").forEach(i => i.onchange = () => setTimeout(() => advance(false), 180));
+    }
+    el.querySelector("#next").onclick = () => advance(false);
+    el.querySelector("#skip").onclick = () => advance(true);
+  },
+
+  done(el) {
+    setProgress(0, 0);
+    const key = S.roles.includes("store") ? "store" : S.roles.includes("start") ? "start" : S.roles.includes("shop") ? "shop" : "none";
+    const [title, line] = PERSONA[key];
+    const tagNo = S.id.replace(/[^a-z0-9]/gi, "").slice(0, 6).toUpperCase();
+    const contact = S.chat && S.chat !== "No thanks" && (S.instagram || S.phone);
+    el.innerHTML = `
+      <h1 class="hero">Thank <em>you!</em></h1>
+      <p class="lede">${contact ? `We'll reach out on ${S.instagram ? "Instagram" : "WhatsApp"} soon.` : "That really helps."} Enjoy the rest of the market.</p>
+      <div class="tag-wrap"><div class="tag" role="img" aria-label="${esc(title)}. ${esc(line)}">
+        <svg class="tag-shape" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M24 1 H76 L99 13 V96 Q99 99 96 99 H4 Q1 99 1 96 V13 Z" fill="#FFFDF8" stroke="#171717" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
+        <svg class="tag-string" viewBox="0 0 80 52" aria-hidden="true"><path d="M10 50 C 14 30, 40 34, 46 18 S 66 2, 78 2" fill="none" stroke="#2446C5" stroke-width="2" stroke-linecap="round"/></svg>
+        <p class="tag-kicker">You're a</p>
+        <p class="tag-title">${esc(title)}</p>
+        <p class="tag-line">${esc(line)}</p>
+        <p class="tag-no">KOOK · NO. ${esc(tagNo)}</p>
+      </div></div>
+      <div class="actions">${KIOSK ? `<button class="btn primary" id="again" type="button">Next person</button>` : ""}</div>
+      ${ADMIN ? adminPanel() : ""}`;
+    if (KIOSK) {
+      const again = el.querySelector("#again");
+      again.onclick = restart;
+      const t = setTimeout(restart, 45000);
+      again.addEventListener("click", () => clearTimeout(t));
+    }
+    wireAdmin(el);
+  },
+};
+
+function adminPanel() {
+  const all = Object.keys(load(AKEY)).length, waiting = load(QKEY).length;
+  return `<div class="admin"><p><strong>On this device:</strong> ${all} people · ${waiting} waiting to send${ENDPOINT ? "" : " (no Sheet connected yet)"}.</p>
+    <button class="btn" id="dl" type="button">Download backup (CSV)</button></div>`;
+}
+function wireAdmin(el) {
+  const dl = el.querySelector("#dl");
+  if (!dl) return;
+  dl.onclick = () => {
+    const rows = Object.values(load(AKEY));
+    const cols = [...new Set(rows.flatMap(r => Object.keys(r)))];
+    const cell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const csv = [cols.map(cell).join(","), ...rows.map(r => cols.map(c => cell(r[c])).join(","))].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "kook-event-answers.csv";
+    a.click();
+  };
+}
+
+function restart() { fresh(); cur = null; go({ name: "welcome" }, false); }
+
+fresh();
+if (ADMIN && !KIOSK) { cur = { name: "done" }; S.roles = []; }
+go(ADMIN && !KIOSK ? { name: "done" } : { name: "welcome" }, false);
+flush();
+</script>
+</body>
+</html>
