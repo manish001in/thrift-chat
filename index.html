@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Quick chat ✶ thrift</title>
-<meta name="description" content="You talked to us today. A few quick questions about shopping and selling thrift.">
+<meta name="description" content="Thrifting is great. Some parts aren't. Tell us which, in 2 minutes.">
 <meta name="theme-color" content="#FF5FA2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8D%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,14 +89,14 @@ legend { padding: 0; }
 .opt { position: relative; display: block; }
 .opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .opt-face {
-  display: flex; align-items: center; gap: .75rem; min-height: 3.4rem; padding: .7rem 1rem;
+  display: flex; align-items: center; gap: min(.75rem, 3vw); min-height: 3.4rem; padding: .7rem min(1rem, 4vw);
   background: var(--paper); border: 2.5px solid var(--ink); border-radius: 16px; box-shadow: 3px 3px 0 var(--ink);
   font-weight: 500; font-size: 1.08rem; line-height: 1.25; cursor: pointer;
   transition: transform .1s, box-shadow .1s, background-color .15s;
 }
 .opt-face:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
 .emo { flex: none; font-size: 1.35rem; line-height: 1; width: 1.6rem; text-align: center; }
-.opt-txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.opt-txt { flex: 1; min-width: 0; overflow-wrap: break-word; hyphens: auto; }
 .tick { flex: none; width: 1.6rem; height: 1.6rem; border: 2.5px solid var(--ink); display: grid; place-items: center; background: var(--paper); }
 .single .tick { border-radius: 50%; }
 .multi .tick { border-radius: 7px; }
@@ -202,11 +202,11 @@ document.getElementById("mq").innerHTML = Array(2).fill(`<span>${words.map(w => 
 const Q = {
   // shoppers
   shop_where: { kind: "multi", q: "Where do you usually find your thrift pieces?", hint: "Pick as many as you like.", other: true,
-    opts: [["📱", "Instagram thrift pages"], ["🎪", "Pop-ups and flea markets like this one"], ["🏬", "Thrift shops"], ["💬", "WhatsApp groups"], ["🛒", "Apps or websites"], ["🔁", "Swaps with friends"]] },
+    opts: [["📱", "Instagram thrift pages"], ["🎪", EVENT ? "Pop-ups and flea markets like this one" : "Pop-ups and flea markets"], ["🏬", "Thrift shops"], ["💬", "WhatsApp groups"], ["🛒", "Apps or websites"], ["🔁", "Swaps with friends"]] },
   shop_bugs: { kind: "multi", q: "When you shop from Instagram thrift pages, what bugs you the most?", hint: "Be honest, pick all that apply.", other: true,
     opts: [["🙄", "“DM for price”"], ["⚡", "Things sell out before I even see them"], ["📏", "Not sure about size or condition"], ["🤨", "Paying before I can trust the seller"], ["🐢", "Slow replies"], ["📦", "Shipping and tracking"], ["↩️", "No returns"], ["😌", "Honestly, nothing much"]] },
   shop_find: { kind: "multi", q: "How do you usually come across new thrift stores?", other: true,
-    opts: [["🔍", "Instagram explore and reels"], ["👯", "Friends tell me"], ["🎪", "Events like this"], ["🌟", "Influencers and creators"], ["💛", "I mostly stick to my favourites"]] },
+    opts: [["🔍", "Instagram explore and reels"], ["👯", "Friends tell me"], ["🎪", EVENT ? "Events like this" : "Pop-ups and events"], ["🌟", "Influencers and creators"], ["💛", "I mostly stick to my favourites"]] },
   shop_often: { kind: "single", q: "How often do you end up buying thrift?",
     opts: [["🔥", "Pretty much every week"], ["✨", "A few times a month"], ["🗓️", "About once a month"], ["🌙", "A few times a year"], ["🐣", "Today's my first time!"]] },
   shop_fix: { kind: "text", q: "If you could fix one thing about shopping thrift, what would it be?", hint: "A line or two is perfect.", placeholder: "I wish…" },
@@ -248,7 +248,7 @@ const PERSONA = {
   store: ["👑", "Store boss", "Thanks for telling us how it really works behind the counter."],
   start: ["🌱", "Future store owner", "Go build it. We can't wait to see what you make."],
   shop: ["💎", "Rare find hunter", "Thanks for telling us how thrifting really feels."],
-  none: ["✌️", "Good company", "Thanks for chatting with us today."],
+  none: ["✌️", "Good company", EVENT ? "Thanks for chatting with us today." : "Thanks for chatting with us."],
 };
 
 /* ---------- state ---------- */
@@ -344,13 +344,20 @@ const optValues = q => q.opts.map(o => o[1]);
 const STEPS = {
   welcome(el) {
     mood(0);
-    el.innerHTML = `
+    el.innerHTML = (EVENT ? `
       <div class="sticker-row">
-        <div class="hello"><small>${EVENT ? esc(EVENT) + " · " : ""}hey, it's us again</small>You talked to us today!</div>
+        <div class="hello"><small>${esc(EVENT)} · hey, it's us again</small>You talked to us today!</div>
         <div class="blob" aria-hidden="true">👋</div>
       </div>
       <h1 class="hero">We're building <span class="hl">Instagram</span> for fashion.</h1>
-      <p class="lede">A place to discover fashion and actually shop it. Starting with thrift.</p>
+      <p class="lede">A place to discover fashion and actually shop it. Starting with thrift.</p>` : `
+      <div class="sticker-row">
+        <div class="hello"><small>a tiny survey</small>Hey there!</div>
+        <div class="blob" aria-hidden="true">🛍️</div>
+      </div>
+      <h1 class="hero">Thrifting is great. Some parts <span class="hl">aren't.</span></h1>
+      <p class="lede"><b>Tell us which.</b> We're a small team building a new way to discover and shop clothes, like Instagram but made for fashion. Before we build too much, we're asking people who actually shop and sell what works today and what doesn't.</p>
+      <p class="kicker">⏱️ 2–3 mins · no signup · no spam</p>`) + `
       <fieldset><legend class="q">Is this something you'd be into?</legend>
       ${choiceList("interest", "single", [["😍", "Yes, sounds great!"], ["🤔", "Maybe, tell me more"], ["🙅", "Not really my thing"]], S.interest)}</fieldset>`;
     el.querySelectorAll("input").forEach(i => i.onchange = () => {
@@ -377,7 +384,7 @@ const STEPS = {
     el.innerHTML = `
       <p class="kicker">🎉 yay</p>
       <h2 class="q">Where can we find you?</h2>
-      <p class="hint">Instagram or phone, whichever you like. One is enough.</p>
+      <p class="hint">Instagram or phone, whichever you like. One is enough. We'll also let you in first when it's ready 👀</p>
       <form id="f" novalidate>
         <label class="field"><span class="field-label">Instagram</span>
           <span class="input-wrap"><span class="prefix" aria-hidden="true">@</span><input id="ig" name="instagram" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="40" placeholder="yourhandle" value="${esc(S.instagram.replace(/^@/, ""))}" aria-describedby="err"></span></label>
@@ -505,7 +512,7 @@ const STEPS = {
     const contact = S.chat && S.chat !== "No thanks" && (S.instagram || S.phone);
     el.innerHTML = `
       <h1 class="hero">Thank <span class="hl">you!</span></h1>
-      <p class="lede">${contact ? `We'll slide into your ${S.instagram ? "DMs" : "WhatsApp"} soon.` : "That really helps."} Enjoy the rest of the market ✨</p>
+      <p class="lede">${contact ? `We'll slide into your ${S.instagram ? "DMs" : "WhatsApp"} soon.` : "That really helps."} ${EVENT ? "Enjoy the rest of the market ✨" : "Means a lot ✨"}</p>
       <div class="badge-wrap"><div class="badge" role="img" aria-label="You're a ${esc(title)}. ${esc(line)}">
         <p class="badge-emo" aria-hidden="true">${emo}</p>
         <p class="badge-kicker">You're a</p>
